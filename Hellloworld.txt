@@ -4,7 +4,7 @@
    4 class MainWindow(wx.Frame):
    5     def __init__(self, parent, title):
    6         self.dirname=''
-   7 
+   7 #11111
    8         # A "-1" in the size parameter instructs wxWidgets to use the default size.
    9         # In this case, we select 200px width and the default height.
   10         wx.Frame.__init__(self, parent, title=title, size=(200,-1))

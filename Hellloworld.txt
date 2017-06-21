@@ -1,0 +1,69 @@
+   1 import wx
+   2 import os
+   3 
+   4 class MainWindow(wx.Frame):
+   5     def __init__(self, parent, title):
+   6         self.dirname=''
+   7 
+   8         # A "-1" in the size parameter instructs wxWidgets to use the default size.
+   9         # In this case, we select 200px width and the default height.
+  10         wx.Frame.__init__(self, parent, title=title, size=(200,-1))
+  11         self.control = wx.TextCtrl(self, style=wx.TE_MULTILINE)
+  12         self.CreateStatusBar() # A Statusbar in the bottom of the window
+  13 
+  14         # Setting up the menu.
+  15         filemenu= wx.Menu()
+  16         menuOpen = filemenu.Append(wx.ID_OPEN, "&Open"," Open a file to edit")
+  17         menuAbout= filemenu.Append(wx.ID_ABOUT, "&About"," Information about this program")
+  18         menuExit = filemenu.Append(wx.ID_EXIT,"E&xit"," Terminate the program")
+  19 
+  20         # Creating the menubar.
+  21         menuBar = wx.MenuBar()
+  22         menuBar.Append(filemenu,"&File") # Adding the "filemenu" to the MenuBar
+  23         self.SetMenuBar(menuBar)  # Adding the MenuBar to the Frame content.
+  24 
+  25         # Events.
+  26         self.Bind(wx.EVT_MENU, self.OnOpen, menuOpen)
+  27         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
+  28         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
+  29 
+  30         self.sizer2 = wx.BoxSizer(wx.HORIZONTAL)
+  31         self.buttons = []
+  32         for i in range(0, 6):
+  33             self.buttons.append(wx.Button(self, -1, "Button &"+str(i)))
+  34             self.sizer2.Add(self.buttons[i], 1, wx.EXPAND)
+  35 
+  36         # Use some sizers to see layout options
+  37         self.sizer = wx.BoxSizer(wx.VERTICAL)
+  38         self.sizer.Add(self.control, 1, wx.EXPAND)
+  39         self.sizer.Add(self.sizer2, 0, wx.EXPAND)
+  40 
+  41         #Layout sizers
+  42         self.SetSizer(self.sizer)
+  43         self.SetAutoLayout(1)
+  44         self.sizer.Fit(self)
+  45         self.Show()
+  46 
+  47     def OnAbout(self,e):
+  48         # Create a message dialog box
+  49         dlg = wx.MessageDialog(self, " A sample editor \n in wxPython", "About Sample Editor", wx.OK)
+  50         dlg.ShowModal() # Shows it
+  51         dlg.Destroy() # finally destroy it when finished.
+  52 
+  53     def OnExit(self,e):
+  54         self.Close(True)  # Close the frame.
+  55 
+  56     def OnOpen(self,e):
+  57         """ Open a file"""
+  58         dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.OPEN)
+  59         if dlg.ShowModal() == wx.ID_OK:
+  60             self.filename = dlg.GetFilename()
+  61             self.dirname = dlg.GetDirectory()
+  62             f = open(os.path.join(self.dirname, self.filename), 'r')
+  63             self.control.SetValue(f.read())
+  64             f.close()
+  65         dlg.Destroy()
+  66 
+  67 app = wx.App(False)
+  68 frame = MainWindow(None, "Sample editor")
+  69 app.MainLoop()
